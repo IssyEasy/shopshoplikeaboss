@@ -28,10 +28,16 @@
 
 <ul>
   {% for p in page_obj %}
-    <li>
-      <a href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} тг
-      {% if p.stock > 0 %} ✅ В наличии {% else %} ❌ Нет {% endif %}
-    </li>
+  <li>
+    <a href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} тг
+
+    {% if p.stock > 0 %}
+      ✅ В наличии
+      <a href="{% url 'catalog:cart_add' p.id %}">🛒 Добавить в корзину</a>
+    {% else %}
+      ❌ Нет
+    {% endif %}
+  </li>
   {% empty %}
     <li>Товаров пока нет.</li>
   {% endfor %}

@@ -81,3 +81,70 @@ def product_list_by_category(request, slug):
         "page_obj": page_obj,
         "qs_params": qs_params,
     })
+# -------------------------------
+# КОРЗИНА НА СЕССИЯХ
+# -------------------------------
+from django.shortcuts import redirect
+
+def cart_add(request, product_id):
+    from .models import Product
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get("cart", {})
+    if str(product.id) in cart:
+        if cart[str(product.id)] < product.stock:
+            cart[str(product.id)] += 1
+    else:
+        if product.stock > 0:
+            cart[str(product.id)] = 1
+    request.session["cart"] = cart
+    request.session.modified = True
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+def cart_remove(request, product_id):
+    cart = request.session.get("cart", {})
+    cart.pop(str(product_id), None)
+    request.session["cart"] = cart
+    request.session.modified = True
+    return redirect("catalog:cart_detail")
+
+def cart_increase(request, product_id):
+    from .models import Product
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get("cart", {})
+    if str(product.id) in cart and cart[str(product.id)] < product.stock:
+        cart[str(product.id)] += 1
+    request.session["cart"] = cart
+    request.session.modified = True
+    return redirect("catalog:cart_detail")
+
+def cart_decrease(request, product_id):
+    cart = request.session.get("cart", {})
+    if str(product_id) in cart:
+        cart[str(product_id)] -= 1
+        if cart[str(product_id)] <= 0:
+            cart.pop(str(product_id))
+    request.session["cart"] = cart
+    request.session.modified = True
+    return redirect("catalog:cart_detail")
+
+def cart_detail(request):
+    from .models import Product
+    cart = request.session.get("cart", {})
+    products = Product.objects.filter(id__in=cart.keys())
+    cart_items = []
+    total_price = 0
+    total_quantity = 0
+    for p in products:
+        qty = cart[str(p.id)]
+        cart_items.append({
+            "product": p,
+            "quantity": qty,
+            "total": p.price * qty
+        })
+        total_price += p.price * qty
+        total_quantity += qty
+    return render(request, "catalog/cart_detail.html", {
+        "cart_items": cart_items,
+        "total_price": total_price,
+        "total_quantity": total_quantity
+    })

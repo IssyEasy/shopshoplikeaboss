@@ -7,7 +7,9 @@
 <body>
 <header>
   <a href="{% url 'catalog:home' %}">Магазин</a> |
-  <a href="{% url 'catalog:category_list' %}">Категории</a>
+  <a href="{% url 'catalog:category_list' %}">Категории</a> |
+  <!-- Глобальная кнопка корзины -->
+  <a href="{% url 'catalog:cart_detail' %}">🛒 Корзина</a>
   <hr>
 </header>
 

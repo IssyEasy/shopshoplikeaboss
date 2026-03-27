@@ -6,11 +6,11 @@
 
 {# БЕЙДЖ НАЛИЧИЯ #}
 {% if product.stock > 0 %}
-  <div style="display:inline-block;padding:6px 10px;border-radius:8px;">
+  <div style="display:inline-block;padding:6px 10px;border-radius:8px;background:#d4edda;color:#155724;">
     В наличии: {{ product.stock }}
   </div>
 {% else %}
-  <div style="display:inline-block;padding:6px 10px;border-radius:8px;">
+  <div style="display:inline-block;padding:6px 10px;border-radius:8px;background:#f8d7da;color:#721c24;">
     Нет в наличии
   </div>
 {% endif %}
@@ -23,7 +23,7 @@
     <span style="text-decoration:line-through; opacity:0.7;">
       {{ product.old_price }} тг
     </span>
-    <span style="font-weight:700; font-size:18px;">
+    <span style="font-weight:700; font-size:18px; margin-left:10px;">
       {{ product.price }} тг
     </span>
   {% else %}
@@ -32,6 +32,18 @@
     </span>
   {% endif %}
 </p>
+
+{# КНОПКА "ДОБАВИТЬ В КОРЗИНУ" #}
+{% if product.stock > 0 %}
+  <p>
+    <a href="{% url 'catalog:cart_add' product.id %}" 
+       style="padding:8px 14px; background:#28a745; color:white; border-radius:5px; text-decoration:none;">
+      Добавить в корзину
+    </a>
+  </p>
+{% else %}
+  <p style="color:red;">Товар отсутствует в наличии</p>
+{% endif %}
 
 {# ГАЛЕРЕЯ ФОТО #}
 <h3>Фото</h3>
@@ -43,8 +55,8 @@
         <img src="{{ img.image.url }}" alt="{{ img.alt_text }}"
              style="width:140px;height:140px;object-fit:cover;border-radius:10px;">
       </a>
-   {% endfor %}
-</div>
+    {% endfor %}
+  </div>
 {% else %}
   <p>Фото пока нет.</p>
 {% endif %}
