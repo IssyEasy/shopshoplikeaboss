@@ -5,8 +5,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('catalog.urls')),
+    path('accounts/', include('accounts.urls')),           # регистрация
+    path('accounts/', include('django.contrib.auth.urls')), # login/logout
+    path('', include('catalog.urls')),                     # каталог и главная
+    path('', include('orders.urls')),                      # мои заказы
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

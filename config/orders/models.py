@@ -1,19 +1,32 @@
 from django.db import models
-from catalog.models import Product
+from django.conf import settings
+from catalog.models import Product  # если есть отдельная модель Product
 
 class Order(models.Model):
-    full_name = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
-    address = models.TextField()
-    status = models.CharField(max_length=50)
+    STATUS_CHOICES = [
+        ("new", "Новый"),
+        ("processing", "В обработке"),
+        ("done", "Завершён"),
+        ("canceled", "Отменён"),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="orders"
+    )
+    product = models.ForeignKey(
+    Product,
+    null=True,         # разрешаем null
+    blank=True,        # разрешаем пустое поле в формах
+    on_delete=models.SET_NULL
+)
+    quantity = models.PositiveIntegerField(default=1)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.full_name
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+        return f"Заказ #{self.id} ({self.get_status_display()})"
