@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
-<h2>Регистрация</h2>
+<div style="max-width:400px; margin:auto; background:white; padding:30px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+  <h2 style="text-align:center; margin-bottom:20px;">Регистрация</h2>
 
-<form method="post">
+  <form method="post" style="display:flex; flex-direction:column; gap:15px;">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
+    <input type="submit" value="Зарегистрироваться">
+  </form>
 
-<p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+  <p style="text-align:center; margin-top:15px;">
+    Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+  </p>
+</div>
 {% endblock %}

@@ -2,56 +2,59 @@
 {% block title %}{{ catalog.name }}{% endblock %}
 
 {% block content %}
-<h1>{{ catalog.name }}</h1>
+<h1 style="margin-bottom:20px;">{{ catalog.name }}</h1>
 
-<form method="get">
-  <input name="q" placeholder="Поиск" value="{{ request.GET.q|default:'' }}">
-  <input name="min_price" placeholder="Цена от" value="{{ request.GET.min_price|default:'' }}">
-  <input name="max_price" placeholder="Цена до" value="{{ request.GET.max_price|default:'' }}">
-
-  <label>
-    <input type="checkbox" name="in_stock" value="1"
-           {% if request.GET.in_stock == "1" %}checked{% endif %}>
+<!-- Фильтры и поиск -->
+<form method="get" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+  <input name="q" placeholder="Поиск" value="{{ request.GET.q|default:'' }}" style="padding:6px; border-radius:5px; border:1px solid #ccc;">
+  <input name="min_price" placeholder="Цена от" value="{{ request.GET.min_price|default:'' }}" style="padding:6px; border-radius:5px; border:1px solid #ccc;">
+  <input name="max_price" placeholder="Цена до" value="{{ request.GET.max_price|default:'' }}" style="padding:6px; border-radius:5px; border:1px solid #ccc;">
+  
+  <label style="display:flex; align-items:center; gap:5px;">
+    <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock == "1" %}checked{% endif %}>
     В наличии
   </label>
 
-  <select name="sort">
+  <select name="sort" style="padding:6px; border-radius:5px; border:1px solid #ccc;">
     <option value="">По умолчанию</option>
     <option value="price_asc"  {% if request.GET.sort == "price_asc" %}selected{% endif %}>Дешевле</option>
     <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Дороже</option>
     <option value="new"        {% if request.GET.sort == "new" %}selected{% endif %}>Новинки</option>
   </select>
 
-  <button type="submit">Применить</button>
-  <a href="{% url 'catalog:product_list_by_category' catalog.slug %}">Сбросить</a>
+  <button type="submit" style="padding:6px 12px; background:#007bff; color:white; border-radius:5px; border:none;">Применить</button>
+  <a href="{% url 'catalog:product_list_by_category' catalog.slug %}" style="padding:6px 12px; background:#6c757d; color:white; border-radius:5px;">Сбросить</a>
 </form>
 
-<ul>
+<!-- Список товаров -->
+<div style="display:flex; flex-wrap:wrap; gap:20px;">
   {% for p in page_obj %}
-  <li>
-    <a href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a> — {{ p.price }} тг
-
-    {% if p.stock > 0 %}
-      ✅ В наличии
-      <a href="{% url 'catalog:cart_add' p.id %}">🛒 Добавить в корзину</a>
-    {% else %}
-      ❌ Нет
-    {% endif %}
-  </li>
+    <div style="background:white; padding:15px; border-radius:10px; box-shadow:0 3px 8px rgba(0,0,0,0.1); width:220px; display:flex; flex-direction:column; align-items:center;">
+      <a href="{% url 'catalog:product_detail' p.slug %}" style="font-weight:bold; color:#333; text-align:center; margin-bottom:10px;">{{ p.name }}</a>
+      {% if p.images.all %}
+        <img src="{{ p.images.all.0.image.url }}" alt="{{ p.name }}" style="width:180px; height:180px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+      {% endif %}
+      <span style="font-weight:700; margin-bottom:5px;">{{ p.price }} тг</span>
+      {% if p.stock > 0 %}
+        <span style="color:#28a745; margin-bottom:10px;">✅ В наличии</span>
+        <a href="{% url 'catalog:cart_add' p.id %}" style="padding:6px 12px; background:#28a745; color:white; border-radius:5px;">🛒 Добавить</a>
+      {% else %}
+        <span style="color:#dc3545; margin-bottom:10px;">❌ Нет в наличии</span>
+      {% endif %}
+    </div>
   {% empty %}
-    <li>Товаров пока нет.</li>
+    <p>Товаров пока нет.</p>
   {% endfor %}
-</ul>
+</div>
 
-<div>
+<!-- Пагинация -->
+<div style="margin-top:20px; display:flex; justify-content:center; gap:10px;">
   {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">← Назад</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}" style="padding:6px 12px; background:#6c757d; color:white; border-radius:5px;">← Назад</a>
   {% endif %}
-
-  <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
-
+  <span style="padding:6px 12px; background:#f0f0f0; border-radius:5px;">Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
   {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}">Вперёд →</a>
+    <a href="?page={{ page_obj.next_page_number }}{% if qs_params %}&{{ qs_params }}{% endif %}" style="padding:6px 12px; background:#6c757d; color:white; border-radius:5px;">Вперёд →</a>
   {% endif %}
 </div>
 {% endblock %}

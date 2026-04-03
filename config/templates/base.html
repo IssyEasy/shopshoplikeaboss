@@ -1,36 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}Shop{% endblock %}</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}ShopShopLikeABoss{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f4f9; }
+    main { padding:20px; max-width:1200px; margin:auto; }
+    a { text-decoration:none; }
+    button { cursor:pointer; }
+  </style>
 </head>
 <body>
-<header>
-  <a href="{% url 'catalog:home' %}">Магазин</a> |
-  <a href="{% url 'catalog:category_list' %}">Категории</a> |
-  <!-- Глобальная кнопка корзины -->
-  <a href="{% url 'catalog:cart_detail' %}">🛒 Корзина</a>
-  <hr>
-  {% if not request.user.is_authenticated %}
-  <a href="{% url 'login' %}">Войти</a> /
-  <a href="{% url 'register' %}">Регистрация</a>
-{% else %}
-  Привет, {{ request.user.username }} /
-  <form action="{% url 'logout' %}" method="post" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit">Выйти</button>
-  </form> /
-  <a href="{% url 'my_orders' %}">Мои заказы</a>
-{% endif %}
+
+<!-- Шапка -->
+<header style="background:#343a40; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+  <a href="{% url 'catalog:home' %}" style="color:white; font-weight:bold; font-size:20px;">ShopShopLikeABoss</a>
+  <nav style="display:flex; gap:10px; flex-wrap:wrap;">
+    <a href="{% url 'catalog:category_list' %}" 
+       style="padding:8px 12px; background:#6c757d; color:white; border-radius:5px;">Категории</a>
+    <a href="{% url 'catalog:cart_detail' %}" 
+       style="padding:8px 12px; background:#28a745; color:white; border-radius:5px;">🛒 Корзина</a>
+    {% if not request.user.is_authenticated %}
+      <a href="{% url 'login' %}" 
+         style="padding:8px 12px; background:#007bff; color:white; border-radius:5px;">Войти</a>
+      <a href="{% url 'register' %}" 
+         style="padding:8px 12px; background:#ffc107; color:white; border-radius:5px;">Регистрация</a>
+    {% else %}
+      <span style="color:white; padding:8px 12px; background:#17a2b8; border-radius:5px;">Привет, {{ request.user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" style="padding:8px 12px; background:#dc3545; color:white; border:none; border-radius:5px;">Выйти</button>
+      </form>
+      <a href="{% url 'my_orders' %}" 
+         style="padding:8px 12px; background:#6f42c1; color:white; border-radius:5px;">Мои заказы</a>
+    {% endif %}
+  </nav>
 </header>
 
+<!-- Основной контент -->
 <main>
   {% block content %}{% endblock %}
 </main>
 
-<footer>
-  <hr>
-  <small>ENU College • Django Shop</small>
+<!-- Футер -->
+<footer style="background:#f8f9fa; padding:20px 0; text-align:center; font-family:Arial, sans-serif; font-size:14px; color:#555;">
+  <hr style="margin-bottom:15px; border-color:#ddd;">
+  <p>© 2026 ShopShopLikeABoss. Все права защищены.</p>
+  <p>Сделано в <strong>ENU College</strong></p>
 </footer>
+
 </body>
 </html>

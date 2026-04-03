@@ -4,11 +4,15 @@
 <h1>Категории</h1>
 
 {% if categories %}
-<ul>
+<div class="product-grid">
   {% for c in categories %}
-    <li><a href="{% url 'catalog:product_list_by_category' c.slug %}">{{ c.name }}</a></li>
+  <div class="product-card">
+    <a href="{% url 'catalog:product_list_by_category' c.slug %}">
+      <h3>{{ c.name }}</h3>
+    </a>
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% else %}
 <p>Категории пока не добавлены.</p>
 {% endif %}
